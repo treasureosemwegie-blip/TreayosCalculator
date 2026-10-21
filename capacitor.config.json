@@ -3,6 +3,6 @@
   "appName": "Treayos Calculator",
   "webDir": "www",
   "server": {
-    "androidScheme": "http"
+    "androidScheme": "https"
   }
 }

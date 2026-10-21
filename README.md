@@ -38,23 +38,19 @@ dist\TreayosCalculator-debug.apk
 
 The debug APK is signed with the standard Android debug key. It is for testing and side-loading, not Play Store distribution.
 
-### Current development build
+### Current build
 
 The APK in `dist` was built with this embedded API address:
 
 ```
-http://192.168.1.151:8000
+https://treayos-calculator.onrender.com
 ```
 
-It is a development build for a phone on the same Wi-Fi network as the PC:
+It uses the hosted Render backend, the HTTPS Capacitor scheme, and no cleartext traffic. The calculator, converter, and history work offline. MathsAI needs an internet connection and a working Render service.
 
-1. Start the server on the PC with `npm start`.
-2. Make sure Windows Firewall allows Node.js on port `8000`.
-3. Keep the phone on the same network.
+The build is debug-signed, so it is for testing and side-loading, not Play Store distribution.
 
-The calculator, converter, and history work offline. MathsAI needs the PC server and a network connection.
-
-The app uses an HTTP local scheme and cleartext traffic so it can reach the LAN server. This is intentional for development. Do not ship this configuration to the Play Store.
+For local LAN development, set `CALC_API_BASE` to `http://192.168.1.151:8000`, set `server.androidScheme` in `capacitor.config.json` back to `http`, and re-add `android:usesCleartextTraffic="true"` before building.
 
 ### Read-aloud
 
@@ -66,7 +62,7 @@ If read-aloud is silent, check:
 2. Android **Settings → Accessibility → Text-to-speech output** has a speech engine and an English voice installed.
 3. The app's sound toggle is on.
 
-This build is version `1.1` (`versionCode 2`), so it updates over the previous `1.0` install. If Android refuses the update because of a signature mismatch, uninstall the old app first.
+This build is version `1.2` (`versionCode 3`), so it updates over the previous `1.1` install. If Android refuses the update because of a signature mismatch, uninstall the old app first.
 
 ### Rebuild the APK
 
@@ -100,14 +96,12 @@ npm run android:apk
 
 ### Production release
 
-Before a public or Play Store release:
+The current `1.2` build already uses the hosted HTTPS backend, `server.androidScheme: "https"`, and no cleartext traffic.
 
-1. Deploy the Node server behind HTTPS.
-2. Build with `CALC_API_BASE=https://your-server.example.com`.
-3. Change `server.androidScheme` in `capacitor.config.json` to `https`.
-4. Remove `android:usesCleartextTraffic="true"` from `android/app/src/main/AndroidManifest.xml`.
-5. Add a release signing key and build a signed AAB/APK.
-6. Check the current Play Store target API requirement before publishing.
+Before a Play Store release:
+
+1. Add a release signing key and build a signed AAB/APK.
+2. Check the current Play Store target API requirement before publishing.
 
 Keep `OPENAI_API_KEY` on the server. Never bundle `.env`, the API key, or other secrets in the Android app.
 
@@ -145,7 +139,7 @@ Do not commit `.env`. It should be excluded by `.gitignore`; check with `git sta
 ### 2. Create the Render service
 
 1. In Render, choose **New → Blueprint** and connect the GitHub repository. Render reads `render.yaml`.
-2. When prompted, enter `OPENAI_API_KEY`. The Blueprint also sets `AI_MODEL` and `AI_BASE_URL`; you can override them in the Render dashboard.
+2. When prompted, enter `OPENAI_API_KEY`. The Blueprint also sets `AI_MODEL=gemini-3-flash-preview` and `AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai` to match the Gemini-compatible setup; change both in the dashboard if you use a different provider.
 3. If you create the service manually instead, use:
    - Runtime: **Node**
    - Build command: `npm install`
