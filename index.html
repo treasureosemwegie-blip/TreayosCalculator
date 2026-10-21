@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#070a12" />
+  <meta name="application-name" content="Treayos Calculator &amp; MathsAI" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Calculator" />
+  <title>Calculator &amp; Converter</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <link rel="icon" href="/icons/icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="calculator" aria-label="Calculator, converter, MathsAI, and history">
+      <div class="topbar">
+        <button type="button" class="voice" id="voice" aria-pressed="true" aria-label="Mute sound" title="Sound on">
+          <svg class="voice__on" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+            <path d="M15.5 9a4.2 4.2 0 0 1 0 6" />
+            <path d="M18.2 6.4a8 8 0 0 1 0 11.2" />
+          </svg>
+          <svg class="voice__off" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+            <path d="M16.5 9.5l5 5" />
+            <path d="M21.5 9.5l-5 5" />
+          </svg>
+        </button>
+
+        <div class="modes" role="tablist" aria-label="Mode">
+          <button type="button" class="mode is-active" id="tab-calc" role="tab" aria-selected="true" aria-controls="panel-calc" data-mode="calc">Calculate</button>
+          <button type="button" class="mode" id="tab-convert" role="tab" aria-selected="false" aria-controls="panel-convert" data-mode="convert" tabindex="-1">Convert</button>
+          <button type="button" class="mode" id="tab-ai" role="tab" aria-selected="false" aria-controls="panel-ai" data-mode="ai" tabindex="-1">MathsAI</button>
+        </div>
+
+        <button type="button" class="history-toggle" id="history-toggle" aria-pressed="false" aria-controls="panel-history" aria-label="Show history" title="History">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z" />
+            <path d="M12 8v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="panels">
+        <div class="panel" id="panel-calc" role="tabpanel" aria-labelledby="tab-calc">
+          <div class="display" id="display">
+            <div class="display__expr" id="expr" aria-live="polite">0</div>
+            <div class="display__preview" id="preview"></div>
+          </div>
+
+          <div class="keys" id="keys">
+            <button type="button" class="key key--fn" data-action="clear">AC</button>
+            <button type="button" class="key key--fn" data-action="sign" aria-label="Toggle positive or negative">&plusmn;</button>
+            <button type="button" class="key key--fn" data-action="percent" aria-label="Percent">%</button>
+            <button type="button" class="key key--op" data-value="&divide;" aria-label="Divide">&divide;</button>
+
+            <button type="button" class="key" data-value="7">7</button>
+            <button type="button" class="key" data-value="8">8</button>
+            <button type="button" class="key" data-value="9">9</button>
+            <button type="button" class="key key--op" data-value="&times;" aria-label="Multiply">&times;</button>
+
+            <button type="button" class="key" data-value="4">4</button>
+            <button type="button" class="key" data-value="5">5</button>
+            <button type="button" class="key" data-value="6">6</button>
+            <button type="button" class="key key--op" data-value="&minus;" aria-label="Subtract">&minus;</button>
+
+            <button type="button" class="key" data-value="1">1</button>
+            <button type="button" class="key" data-value="2">2</button>
+            <button type="button" class="key" data-value="3">3</button>
+            <button type="button" class="key key--op" data-value="+" aria-label="Add">+</button>
+
+            <button type="button" class="key key--fn" data-action="backspace" aria-label="Backspace">&#9003;</button>
+            <button type="button" class="key" data-value="0">0</button>
+            <button type="button" class="key" data-value=".">.</button>
+            <button type="button" class="key key--equals" data-action="equals" aria-label="Equals">=</button>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-convert" role="tabpanel" aria-labelledby="tab-convert" hidden>
+          <div class="converter">
+            <div class="categories" id="categories" role="group" aria-label="Conversion category"></div>
+
+            <div class="field">
+              <label class="field__label" for="conv-input">From</label>
+              <div class="field__row">
+                <input class="field__input" id="conv-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1" aria-label="Value to convert" />
+                <button type="button" class="unit" id="conv-from-button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="From unit">
+                  <span class="unit__label" id="conv-from-label">Meters (m)</span>
+                  <svg class="unit__chevron" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                <select id="conv-from" class="unit-select" aria-hidden="true" tabindex="-1" hidden></select>
+              </div>
+            </div>
+
+            <button type="button" class="swap" id="conv-swap" aria-label="Swap units" title="Swap units">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 4v13" />
+                <path d="M4 14l3 3 3-3" />
+                <path d="M17 20V7" />
+                <path d="M14 10l3-3 3 3" />
+              </svg>
+            </button>
+
+            <div class="field">
+              <span class="field__label" id="conv-result-label">To</span>
+              <div class="field__row">
+                <output class="field__output" id="conv-result" for="conv-input conv-from conv-to" aria-labelledby="conv-result-label">&mdash;</output>
+                <button type="button" class="unit" id="conv-to-button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="To unit">
+                  <span class="unit__label" id="conv-to-label">Feet (ft)</span>
+                  <svg class="unit__chevron" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                <select id="conv-to" class="unit-select" aria-hidden="true" tabindex="-1" hidden></select>
+              </div>
+            </div>
+
+            <p class="rate" id="conv-rate"></p>
+
+            <button type="button" class="announce-btn" id="conv-announce" aria-label="Hear the converted result">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+                <path d="M15.5 9a4.2 4.2 0 0 1 0 6" />
+                <path d="M18.2 6.4a8 8 0 0 1 0 11.2" />
+              </svg>
+              <span>Hear result</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel ai-panel" id="panel-ai" role="tabpanel" aria-labelledby="tab-ai" hidden>
+          <header class="ai-head">
+            <div class="ai-head__mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3l1.6 4.8L18 9.4l-4.4 1.6L12 16l-1.6-5L6 9.4l4.4-1.6L12 3z" />
+                <path d="M18.7 15.2l.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8.8-2.1z" />
+              </svg>
+            </div>
+            <div class="ai-head__text">
+              <h2 class="ai-head__title" id="ai-title">MathsAI</h2>
+              <p class="ai-head__sub" id="ai-model">Your AI Mathematician</p>
+            </div>
+            <div class="ai-head__actions">
+              <button type="button" class="ai-iconbtn" id="ai-new" aria-label="New chat" title="New chat" hidden>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </button>
+              <button type="button" class="ai-iconbtn" id="ai-settings-toggle" aria-label="AI settings" title="AI settings" hidden>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+                  <circle cx="15" cy="7" r="2" />
+                  <circle cx="9" cy="17" r="2" />
+                </svg>
+              </button>
+            </div>
+          </header>
+
+          <div class="ai-body" id="ai-chat-view">
+            <div class="ai-body__scroll" id="ai-chat">
+              <div class="ai-empty" id="ai-empty">
+                <div class="ai-empty__mark" aria-hidden="true">✦</div>
+                <h3>Ask me anything math-related</h3>
+                <p>Solve equations, check your work, or attach a photo of a problem and I’ll work through it step by step.</p>
+                <div class="ai-suggestions">
+                  <button type="button" data-prompt="Solve 3x² − 5x + 2 = 0 and show the steps.">Solve a quadratic</button>
+                  <button type="button" data-prompt="Calculate the compound interest on $5,000 at 6% for 8 years.">Compound interest</button>
+                  <button type="button" data-attach="true">Solve from a photo</button>
+                </div>
+                <p class="ai-empty__note">AI can make mistakes. Verify important results.</p>
+              </div>
+              <div class="ai-messages" id="ai-messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation"></div>
+            </div>
+
+            <form class="ai-composer" id="ai-composer">
+              <div class="ai-previews" id="ai-previews" hidden></div>
+              <div class="ai-composer__box">
+                <textarea id="ai-input" rows="1" placeholder="Enter or snap your question…" aria-label="Message MathsAI" autocapitalize="sentences" enterkeyhint="send"></textarea>
+                <div class="ai-composer__tools">
+                  <button type="button" class="ai-tool" id="ai-attach" aria-label="Attach or take a photo" title="Attach or take a photo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4.5 7.5h3L9 5.5h6l1.5 2h3A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5V9a1.5 1.5 0 0 1 1.5-1.5z" />
+                      <circle cx="12" cy="13.5" r="3.5" />
+                    </svg>
+                  </button>
+                  <button type="submit" class="ai-send" id="ai-send" aria-label="Send message" title="Send" disabled>
+                    <svg class="ai-send__arrow" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                    <svg class="ai-send__stop" viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="7" y="7" width="10" height="10" rx="2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="ai-composer__meta" hidden>
+                <span class="ai-notice" id="ai-notice" role="status" aria-live="polite"></span>
+              </div>
+              <input type="file" id="ai-file" accept="image/*" multiple hidden />
+            </form>
+          </div>
+
+          <div class="ai-settings" id="ai-settings-view" hidden>
+            <div class="ai-settings__scroll">
+              <p class="ai-settings__intro">Connect a multimodal model to ask questions, solve advanced math, and read calculations from photos.</p>
+              <form class="ai-form" id="ai-form">
+                <label class="ai-field">
+                  <span class="ai-field__label">API key</span>
+                  <span class="ai-keywrap">
+                    <input id="ai-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-..." />
+                    <button type="button" class="ai-keytoggle" id="ai-key-toggle" aria-label="Show API key" title="Show API key">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                        <circle cx="12" cy="12" r="2.5" />
+                      </svg>
+                    </button>
+                  </span>
+                </label>
+                <label class="ai-field">
+                  <span class="ai-field__label">Model</span>
+                  <input id="ai-model-input" type="text" autocomplete="off" spellcheck="false" value="gpt-4o-mini" placeholder="gpt-4o-mini" />
+                </label>
+                <details class="ai-advanced">
+                  <summary>Connection settings</summary>
+                  <label class="ai-field">
+                    <span class="ai-field__label">Base URL</span>
+                    <input id="ai-base" type="url" autocomplete="off" spellcheck="false" value="https://api.openai.com/v1" placeholder="https://api.openai.com/v1" />
+                  </label>
+                  <p class="ai-field__help">Use any OpenAI-compatible endpoint. Photos require a vision-capable model.</p>
+                </details>
+                <label class="ai-check">
+                  <input id="ai-remember" type="checkbox" />
+                  <span>Remember the key on this device</span>
+                </label>
+                <p class="ai-privacy">Your key stays in this browser. Questions and images are sent only to the endpoint above. Do not use this on a shared computer.</p>
+                <p class="ai-form__error" id="ai-settings-error" role="alert"></p>
+                <div class="ai-form__actions">
+                  <button type="submit" class="ai-primary" id="ai-save">Save &amp; start</button>
+                  <button type="button" class="ai-secondary" id="ai-back" hidden>Back to chat</button>
+                  <button type="button" class="ai-danger" id="ai-forget" hidden>Forget key</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-history" role="region" aria-labelledby="history-title" hidden>
+          <div class="history-page">
+            <div class="history-page__head">
+              <div class="history-page__summary">
+                <h2 class="history-page__title" id="history-title">History</h2>
+                <p class="history-page__count" id="history-count" aria-live="polite">No calculations</p>
+              </div>
+              <button type="button" class="history-page__clear" id="history-clear" aria-label="Clear history" title="Clear history" hidden>Clear history</button>
+            </div>
+            <ul class="history__list history-page__list" id="history" aria-label="Calculation history"></ul>
+            <div class="history-page__empty" id="history-empty">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="8.2" />
+                <path d="M12 7.5v5l3.2 1.9" />
+              </svg>
+              <p class="history-page__empty-title">No calculations yet</p>
+              <p class="history-page__empty-text">Results you calculate will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="credit">Built by <span>Treayos</span></p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

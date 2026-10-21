@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Treayos Calculator</string>
+    <string name="title_activity_main">Treayos Calculator</string>
+    <string name="package_name">com.treayos.calculator</string>
+    <string name="custom_url_scheme">com.treayos.calculator</string>
+</resources>
